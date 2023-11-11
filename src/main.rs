@@ -10,17 +10,23 @@ fn main() {
     let angles: Vec<f64> = Vec::with_capacity(ITERATION_MAX);
 
     // pendulum
-    let mut anglular_acceleration = 0.0;
-    let mut angle = FRAC_PI_4;
     let length = 150.0;
     let pivot = DVec2::new(0.0, 0.0) * 0.5; // origin of screen
-    let mut mass_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
+    let mut angle = FRAC_PI_4;
+    let mut anglular_acceleration = DVec2::ZERO;
+    let mut angular_velocity = DVec2::ZERO;
+    let mut angular_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
     
-    for time in 0..ITERATION_MAX {
+    let mut time = 0.0;
+    loop {
         // TODO: fix me!!!
         angle += 0.02; 
-
+    
         // update the mass position given the new angle
         mass_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
     }
+}
+
+fn udate_acceleration(angle: f64, length: f64) -> DVec2 {
+    
 }
