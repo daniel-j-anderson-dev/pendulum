@@ -18,7 +18,7 @@ async fn main() {
         clear_background(LIGHTGRAY);
 
         // TODO: fix me!!!
-        angle += 0.01; 
+        angle += 0.02; 
 
         // update the mass position given the new angle
         mass_position = pivot + Vec2::new(angle.sin(), angle.cos()) * length;
