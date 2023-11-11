@@ -1,7 +1,7 @@
 use std::f64::consts::FRAC_PI_4;
 use glam::DVec2;
 
-pub const GRAVITY: f64 = 9.8;
+pub const GRAVITY: f64 = 9.81;
 pub const ITERATION_MAX: usize = 100;
 pub const THICKNESS: f64 = 1.0;
 pub const MASS_RADIUS: f64 = 10.0;
@@ -23,10 +23,10 @@ fn main() {
         angle += 0.02; 
     
         // update the mass position given the new angle
-        mass_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
+        angular_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
     }
 }
 
-fn update_acceleration(angle: f64, length: f64) -> DVec2 {
-    
+fn update_acceleration(angle: f64, length: f64) -> f64 {
+    return (angle.sin()) * (GRAVITY / length);
 }
