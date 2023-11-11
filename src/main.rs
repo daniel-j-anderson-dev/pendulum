@@ -19,7 +19,7 @@ fn main() {
     let mut angular_velocity = DVec2::ZERO;
     let mut angular_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
     
-    let mut time = 0.0;
+    let mut time = START_TIME;
     while time < END_TIME {
         // TODO: fix me!!!
         angle += 0.02; 
