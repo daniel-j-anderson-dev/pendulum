@@ -13,11 +13,11 @@ fn main() {
 
     // pendulum
     let length = 150.0;
-    let pivot = DVec2::new(0.0, 0.0) * 0.5;
+    let pivot = DVec2::new(0.0, 0.0);
     let mut angle = FRAC_PI_4;
-    let mut anglular_acceleration = DVec2::ZERO;
-    let mut angular_velocity = DVec2::ZERO;
     let mut angular_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
+    let mut angular_velocity = DVec2::ZERO;
+    let mut anglular_acceleration = DVec2::ZERO;
     
     let mut time = START_TIME;
     while time < END_TIME {
