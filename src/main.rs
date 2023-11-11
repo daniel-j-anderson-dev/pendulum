@@ -27,6 +27,6 @@ fn main() {
     }
 }
 
-fn udate_acceleration(angle: f64, length: f64) -> DVec2 {
+fn update_acceleration(angle: f64, length: f64) -> DVec2 {
     
 }
