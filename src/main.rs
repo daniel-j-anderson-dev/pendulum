@@ -1,36 +1,54 @@
-use std::f64::consts::FRAC_PI_4;
-use glam::DVec2;
+use std::{
+    fs::OpenOptions,
+    io::{
+        BufWriter,
+        Write,
+    },
+};
 
-pub const GRAVITY: f64 = 9.81;
-pub const THICKNESS: f64 = 1.0;
-pub const MASS_RADIUS: f64 = 10.0;
-pub const DELTA_TIME: f64 = 0.001;
-pub const START_TIME: f64 = 0.0;
-pub const END_TIME: f64 = 100.0;
+const RAW_OUTPUT_PATH: &str = "pendulum_exact.dat";
 
 fn main() {
-    let angles: Vec<f64> = Vec::with_capacity((END_TIME - START_TIME) as usize);
-
-    // pendulum
-    let length = 150.0;
-    let pivot = DVec2::new(0.0, 0.0);
-    let mut angle = FRAC_PI_4;
-    let mut angular_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
-    let mut angular_velocity = DVec2::ZERO;
-    let mut anglular_acceleration = DVec2::ZERO;
+    let start_time = 0.0;
+    let end_time = 20.0;
+    let time_step = 0.0002;
+    let iteration_max = ((end_time - start_time) / time_step) as usize;
     
-    let mut time = START_TIME;
-    while time < END_TIME {
-        // TODO: fix me!!!
-        angle += 0.02; 
+    let gravity = 9.81;
+    let length = 1.2;
+    let mut angular_velocity = 0.0;
+    let mut angular_position = 1.0;
     
-        // update the mass position given the new angle
-        angular_position = pivot + DVec2::new(angle.sin(), angle.cos()) * length;
+    let mut data: Vec<(f64, f64)> = Vec::with_capacity(iteration_max); // (time, angular_position)
+    
+    let mut time = start_time;
+    for _ in 1..iteration_max {
+        data.push((time, angular_position));
 
-        time += DELTA_TIME;
+        angular_velocity += -(gravity / length) * angular_position.sin() * time_step;
+        angular_position += angular_velocity * time_step;
+
+        time += time_step;
+    }
+
+    match save_data(&data) {
+        Ok(()) => println!("Saved output to {}", RAW_OUTPUT_PATH),
+        Err(error) => println!("Error saving output: {}", error),
     }
 }
 
-fn update_acceleration(angle: f64, length: f64) -> f64 {
-    return (angle.sin()) * (GRAVITY / length);
+fn save_data(data: &[(f64, f64)]) -> Result<(), std::io::Error> {
+    let file = OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .create(true)
+        .open(RAW_OUTPUT_PATH)?;
+    let mut file = BufWriter::new(file);
+
+    for (time, angle) in data {
+        writeln!(file, "{:.16e} {:.16}", time, angle)?;
+    }
+
+    return Ok(())
 }
+
