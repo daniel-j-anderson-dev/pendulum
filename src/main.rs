@@ -60,12 +60,12 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     let dimensions = (500, 500);
     let caption = "Pendulum Angle vs Time";
     let font = ("Times New Roman", 20).into_font();
-    let backgroud_color = &WHITE;
+    let background_color = &WHITE;
     let curve_color = &RED;
     let (x_bounds, y_bounds) = calculate_plot_bounds(&data).ok_or("Couldn't find bounds because data was empty")?;
 
     let root = BitMapBackend::new(PLOT_OUTPUT_PATH, dimensions).into_drawing_area();
-    root.fill(backgroud_color)?;
+    root.fill(background_color)?;
 
     let mut chart = ChartBuilder::on(&root)
         .caption(caption, font)
