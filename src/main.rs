@@ -57,6 +57,7 @@ fn save_raw_data(data: &[(f64, f64)]) -> Result<(), std::io::Error> {
 fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     use plotters::prelude::*;
 
+    // Plot settings
     let dimensions = (1280, 960);
     let top_margin = 0;
     let left_margin = dimensions.0 / 20;
@@ -70,25 +71,39 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
 
     let background_color = &WHITE;
     let curve_width = 4;
-    let curve_color = &RED;
-    let curve_style = curve_color.stroke_width(curve_width);
+    let curve_style = RED.stroke_width(curve_width);
 
     let (x_bounds, y_bounds) = calculate_plot_bounds(&data).ok_or("Couldn't find bounds because data was empty")?;
+    let x_axis_description = "Time";
+    let y_axis_description = "Angle";
+    let axes_description_font = caption_font;
+    let axes_description_font_size = 50;
+    let axes_description_style = (axes_description_font, axes_description_font_size).into_font();
+    let axes_style = BLACK.stroke_width(2);
 
+    // Create plot file 
     let root = BitMapBackend::new(PLOT_OUTPUT_PATH, dimensions).into_drawing_area();
-    root.fill(background_color)?;
-    let root = root.margin(top_margin, bottom_margin, left_margin, right_margin);
+    root.fill(background_color)?; // set background color
+    let root = root.margin(top_margin, bottom_margin, left_margin, right_margin); // set margins
 
+    // Create chart area
     let mut chart = ChartBuilder::on(&root)
-        .caption(caption, caption_style)
-        .x_label_area_size(x_bounds.end - x_bounds.start)
-        .y_label_area_size(y_bounds.end - y_bounds.start)
-        .build_cartesian_2d(x_bounds, y_bounds)?;
+        .caption(caption, caption_style) // set caption
+        .x_label_area_size(x_bounds.end - x_bounds.start) // set x bounds
+        .y_label_area_size(y_bounds.end - y_bounds.start) //set y bounds
+        .build_cartesian_2d(x_bounds, y_bounds)?; // 2d cartesian chart
 
+    // draw axes and grid lines
+    // TODO: fix position of descriptions
     chart
         .configure_mesh()
+        .axis_style(axes_style)
+        .x_desc(x_axis_description)
+        .y_desc(y_axis_description)
+        .axis_desc_style(axes_description_style)
         .draw()?;
 
+    // draw the curve
     chart.draw_series(LineSeries::new(data, curve_style))?;
 
     root.present()?;
