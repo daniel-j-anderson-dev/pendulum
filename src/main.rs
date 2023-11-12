@@ -1,6 +1,6 @@
 use std::ops::Range;
 
-const RAW_OUTPUT_PATH: &str = "pendulum_exact.dat";
+const RAW_OUTPUT_PATH: &str = "pendulum.dat";
 const PLOT_OUTPUT_PATH: &str = "pendulum_plot.png";
 
 fn main() {
