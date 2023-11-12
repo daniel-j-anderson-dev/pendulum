@@ -13,7 +13,7 @@ fn main() {
     let length = 1.2;
     let mut angular_velocity = 0.0;
     let mut angular_position = 1.0;
-    
+
     let mut data: Vec<(f64, f64)> = Vec::with_capacity(iteration_max); // (time, angular_position)
     
     let mut time = start_time;
@@ -57,21 +57,39 @@ fn save_raw_data(data: &[(f64, f64)]) -> Result<(), std::io::Error> {
 fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     use plotters::prelude::*;
 
-    let dimensions = (500, 500);
+    let dimensions = (1280, 960);
+    let top_margin = 0;
+    let left_margin = dimensions.0 / 20;
+    let bottom_margin = dimensions.1 / 20;
+    let right_margin = dimensions.1 / 20;
+
     let caption = "Pendulum Angle vs Time";
-    let font = ("Times New Roman", 20).into_font();
+    let caption_font = "Times New Roman";
+    let caption_font_size =  75;
+    let caption_style = (caption_font, caption_font_size).into_font();
+
     let background_color = &WHITE;
+    let curve_width = 4;
     let curve_color = &RED;
+    let curve_style = curve_color.stroke_width(curve_width);
+
     let (x_bounds, y_bounds) = calculate_plot_bounds(&data).ok_or("Couldn't find bounds because data was empty")?;
 
     let root = BitMapBackend::new(PLOT_OUTPUT_PATH, dimensions).into_drawing_area();
     root.fill(background_color)?;
+    let root = root.margin(top_margin, bottom_margin, left_margin, right_margin);
 
     let mut chart = ChartBuilder::on(&root)
-        .caption(caption, font)
+        .caption(caption, caption_style)
+        .x_label_area_size(x_bounds.end - x_bounds.start)
+        .y_label_area_size(y_bounds.end - y_bounds.start)
         .build_cartesian_2d(x_bounds, y_bounds)?;
-    chart.configure_mesh().draw()?;
-    chart.draw_series(LineSeries::new(data, curve_color))?;
+
+    chart
+        .configure_mesh()
+        .draw()?;
+
+    chart.draw_series(LineSeries::new(data, curve_style))?;
 
     root.present()?;
 
