@@ -1,15 +1,7 @@
-use std::io::Write;
 use std::ops::Range;
-use plotters::prelude::*;
 
 const RAW_OUTPUT_PATH: &str = "pendulum_exact.dat";
 const PLOT_OUTPUT_PATH: &str = "pendulum_plot.png";
-const PLOT_DIMENSIONS: (u32, u32) = (500, 500);
-const PLOT_CAPTION: &str = "Pendulum Angle vs Time";
-const PLOT_FONT: &str = "Times New Roman";
-const PLOT_FONT_SIZE: u32 = 20;
-const PLOT_BACKGROUND_COLOR: &RGBColor = &WHITE;
-const PLOT_CURVE_COLOR: &RGBColor = &RED;
 
 fn main() {
     let start_time = 0.0;
@@ -46,6 +38,8 @@ fn main() {
 }
 
 fn save_raw_data(data: &[(f64, f64)]) -> Result<(), std::io::Error> {
+    use std::io::Write;
+
     let file = std::fs::OpenOptions::new()
         .write(true)
         .truncate(true)
@@ -61,17 +55,23 @@ fn save_raw_data(data: &[(f64, f64)]) -> Result<(), std::io::Error> {
 }
 
 fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
+    use plotters::prelude::*;
+
+    let dimensions = (500, 500);
+    let caption = "Pendulum Angle vs Time";
+    let font = ("Times New Roman", 20).into_font();
+    let backgroud_color = &WHITE;
+    let curve_color = &RED;
     let (x_bounds, y_bounds) = calculate_plot_bounds(&data).ok_or("Couldn't find bounds because data was empty")?;
 
-    let root = BitMapBackend::new(PLOT_OUTPUT_PATH, PLOT_DIMENSIONS).into_drawing_area();
-    root.fill(PLOT_BACKGROUND_COLOR)?;
+    let root = BitMapBackend::new(PLOT_OUTPUT_PATH, dimensions).into_drawing_area();
+    root.fill(backgroud_color)?;
 
     let mut chart = ChartBuilder::on(&root)
-        .caption(PLOT_CAPTION, (PLOT_FONT, PLOT_FONT_SIZE).into_font())
+        .caption(caption, font)
         .build_cartesian_2d(x_bounds, y_bounds)?;
-    
     chart.configure_mesh().draw()?;
-    chart.draw_series(LineSeries::new(data, PLOT_CURVE_COLOR))?;
+    chart.draw_series(LineSeries::new(data, curve_color))?;
 
     root.present()?;
 
