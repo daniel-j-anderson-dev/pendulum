@@ -58,7 +58,7 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     use plotters::prelude::*;
 
     // Plot settings
-    let dimensions = (1280, 960);
+    let dimensions = (640, 502);
     let top_margin = 0;
     let left_margin = dimensions.0 / 20;
     let bottom_margin = dimensions.1 / 20;
@@ -66,7 +66,7 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
 
     let caption = "Pendulum Angle vs Time";
     let caption_font = "Times New Roman";
-    let caption_font_size =  75;
+    let caption_font_size =  75 / 2;
     let caption_style = (caption_font, caption_font_size).into_font();
 
     let background_color = &WHITE;
@@ -77,7 +77,7 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     let x_axis_description = "Time";
     let y_axis_description = "Angle";
     let axes_description_font = caption_font;
-    let axes_description_font_size = 50;
+    let axes_description_font_size = 50 / 2;
     let axes_description_style = (axes_description_font, axes_description_font_size).into_font();
     let axes_style = BLACK.stroke_width(2);
 
