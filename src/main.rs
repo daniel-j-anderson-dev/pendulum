@@ -59,10 +59,9 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
 
     // Plot settings
     let dimensions = (640, 502);
-    let top_margin = 0;
-    let left_margin = dimensions.0 / 20;
-    let bottom_margin = dimensions.1 / 20;
-    let right_margin = dimensions.1 / 20;
+    let left_margin = dimensions.0 as f64/ 12.5;
+    let bottom_margin = dimensions.1 as f64/ 12.5;
+    let right_margin = dimensions.1 as f64/ 10.0;
 
     let caption = "Pendulum Angle vs Time";
     let caption_font = "Times New Roman";
@@ -70,7 +69,7 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     let caption_style = (caption_font, caption_font_size).into_font();
 
     let background_color = &WHITE;
-    let curve_width = 4;
+    let curve_width = 1;
     let curve_style = RED.stroke_width(curve_width);
 
     let (x_bounds, y_bounds) = calculate_plot_bounds(&data).ok_or("Couldn't find bounds because data was empty")?;
@@ -79,25 +78,23 @@ fn plot_data(data: Vec<(f64, f64)>) -> Result<(), Box<dyn std::error::Error>> {
     let axes_description_font = caption_font;
     let axes_description_font_size = 50 / 2;
     let axes_description_style = (axes_description_font, axes_description_font_size).into_font();
-    let axes_style = BLACK.stroke_width(2);
 
     // Create plot file 
     let root = BitMapBackend::new(PLOT_OUTPUT_PATH, dimensions).into_drawing_area();
     root.fill(background_color)?; // set background color
-    let root = root.margin(top_margin, bottom_margin, left_margin, right_margin); // set margins
 
     // Create chart area
     let mut chart = ChartBuilder::on(&root)
         .caption(caption, caption_style) // set caption
-        .x_label_area_size(x_bounds.end - x_bounds.start) // set x bounds
-        .y_label_area_size(y_bounds.end - y_bounds.start) //set y bounds
+        .set_label_area_size(LabelAreaPosition::Bottom, bottom_margin)
+        .set_label_area_size(LabelAreaPosition::Left, left_margin)
+        .set_label_area_size(LabelAreaPosition::Right, right_margin)
         .build_cartesian_2d(x_bounds, y_bounds)?; // 2d cartesian chart
 
     // draw axes and grid lines
     // TODO: fix position of descriptions
     chart
         .configure_mesh()
-        .axis_style(axes_style)
         .x_desc(x_axis_description)
         .y_desc(y_axis_description)
         .axis_desc_style(axes_description_style)
@@ -115,6 +112,8 @@ fn calculate_plot_bounds(data: &[(f64, f64)]) -> Option<(Range<f64>, Range<f64>)
     if data.is_empty() {
         return None;
     }
+
+    let y_buffer = 0.5;
     
     let (mut x_min, mut x_max) = (f64::INFINITY, f64::NEG_INFINITY);
     let (mut y_min, mut y_max) = (f64::INFINITY, f64::NEG_INFINITY);
@@ -126,5 +125,10 @@ fn calculate_plot_bounds(data: &[(f64, f64)]) -> Option<(Range<f64>, Range<f64>)
         y_max = y_max.max(y);
     }
 
-    return Some((x_min..x_max, y_min..y_max));
+    return Some((x_min..x_max, y_min-y_buffer..y_max+y_buffer));
+}
+
+#[test]
+fn f() {
+
 }
